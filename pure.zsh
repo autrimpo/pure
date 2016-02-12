@@ -227,8 +227,8 @@ prompt_pure_setup() {
 	zstyle ':vcs_info:*' max-exports 2
 	# vcs_info_msg_0_ = ' %b' (for branch)
 	# vcs_info_msg_1_ = 'x%R' git top level (%R), x-prefix prevents creation of a named path (AUTO_NAME_DIRS)
-	zstyle ':vcs_info:git*' formats '%s' '%b'
-	zstyle ':vcs_info:git*' actionformats '%s' '%b|%a'
+	zstyle ':vcs_info:git*' formats ' %F{green}%s%F{cyan}:%f%b' 'x%R'
+	zstyle ':vcs_info:git*' actionformats ' %F{green}%s%F{cyan}:%f%b|a' 'x%R'
 
 	# show username@host if logged in through SSH
 	[[ "$SSH_CONNECTION" != '' ]] && prompt_pure_username=' %F{242}%n@%m%f'
@@ -239,7 +239,7 @@ prompt_pure_setup() {
 	# prompt turns red if the previous command didn't exit with 0
 	PROMPT='${prompt_pure_username}'
 	PROMPT+='%F{white}${prompt_pure_pwd}'
-	PROMPT+=' %F{green}${vcs_info_msg_0_}%F{cyan}:%f${vcs_info_msg_1_}%F{yellow}${prompt_pure_git_dirty}%f'
+	PROMPT+='${vcs_info_msg_0_}%F{blue}${prompt_pure_git_dirty}%f'
 	PROMPT+=' %(?.%F{cyan}.%F{red})${PURE_PROMPT_SYMBOL:-❯}%f '
 	RPROMPT='%F{cyan}${prompt_pure_git_arrows}%f'
 	RPROMPT+='%F{yellow}${prompt_pure_cmd_exec_time}%f'
