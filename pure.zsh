@@ -27,30 +27,6 @@
 # turns seconds into human readable time
 # 165392 => 1d 21h 56m 32s
 # https://github.com/sindresorhus/pretty-time-zsh
-prompt_pure_human_time_to_var() {
-	local human=" " total_seconds=$1 var=$2
-	local days=$(( total_seconds / 60 / 60 / 24 ))
-	local hours=$(( total_seconds / 60 / 60 % 24 ))
-	local minutes=$(( total_seconds / 60 % 60 ))
-	local seconds=$(( total_seconds % 60 ))
-	(( days > 0 )) && human+="${days}d "
-	(( hours > 0 )) && human+="${hours}h "
-	(( minutes > 0 )) && human+="${minutes}m "
-	human+="${seconds}s"
-
-	# store human readable time in variable as specified by caller
-	typeset -g "${var}"="${human}"
-}
-
-# stores (into prompt_pure_cmd_exec_time) the exec time of the last command if set threshold was exceeded
-prompt_pure_check_cmd_exec_time() {
-	integer elapsed
-	(( elapsed = EPOCHSECONDS - ${prompt_pure_cmd_timestamp:-$EPOCHSECONDS} ))
-	prompt_pure_cmd_exec_time=
-	(( elapsed > ${PURE_CMD_MAX_EXEC_TIME:=5} )) && {
-		prompt_pure_human_time_to_var $elapsed "prompt_pure_cmd_exec_time"
-	}
-}
 
 prompt_pure_minifi_path() {
 	local pwd="${PWD/$HOME/~}"
@@ -94,9 +70,6 @@ prompt_pure_preexec() {
 }
 
 prompt_pure_precmd() {
-	# check exec time and store it in a variable
-	prompt_pure_check_cmd_exec_time
-
 	# by making sure that prompt_pure_cmd_timestamp is defined here the async functions are prevented from interfering
 	# with the initial preprompt rendering
 	prompt_pure_cmd_timestamp=
@@ -242,7 +215,6 @@ prompt_pure_setup() {
 	PROMPT+='${vcs_info_msg_0_}%F{blue}${prompt_pure_git_dirty}%f'
 	PROMPT+=' %(?.%F{cyan}.%F{red})${PURE_PROMPT_SYMBOL:-❯}%f '
 	RPROMPT='%F{cyan}${prompt_pure_git_arrows}%f'
-	RPROMPT+='%F{yellow}${prompt_pure_cmd_exec_time}%f'
 }
 
 prompt_pure_setup "$@"
